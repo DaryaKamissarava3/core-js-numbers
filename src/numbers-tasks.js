@@ -50,7 +50,7 @@ function getCircleCircumference(radius) {
  *  -3, 3  => 0
  */
 function getAverage(value1, value2) {
-  return Number((BigInt(value1) + BigInt(value2)) / BigInt(2));
+  return value1 / 2 + value2 / 2;
 }
 
 /**
@@ -104,12 +104,13 @@ function getLinearEquationRoot(a, b) {
  *   (0,1) (0,-1)    => π
  *   (0,-1) (1,0)    => π/2
  *   (0,1) (0,1)     => 0
- *   (0,1) (1,2)     => 0
  */
 function getAngleBetweenVectors(x1, y1, x2, y2) {
   const scalar = x1 * x2 + y1 * y2;
 
-  return Math.acos(scalar / (Math.sqrt(x1 ** 2 + y1 ** 2)) * (Math.sqrt(x2 ** 2 + y2 ** 2)));
+  return Math.acos(
+    (scalar / Math.sqrt(x1 ** 2 + y1 ** 2)) * Math.sqrt(x2 ** 2 + y2 ** 2)
+  );
 }
 
 /**
@@ -126,9 +127,7 @@ function getAngleBetweenVectors(x1, y1, x2, y2) {
  *     0     => 0
  */
 function getLastDigit(value) {
-  const stingValue = value.toString();
-
-  return parseInt(stingValue.charAt(stingValue.length - 1));
+  return value % 10;
 }
 
 /**
@@ -181,7 +180,7 @@ function getParallelepipedDiagonal(a, b, c) {
  *   1678, 3  => 2000
  */
 function roundToPowerOfTen(num, pow) {
-  return Math.round(num / Math.pow(10, pow)) * Math.pow(10, pow);
+  return Math.round(num / 10 ** pow) * 10 ** pow;
 }
 
 /**
@@ -206,7 +205,7 @@ function isPrime(n) {
     return false;
   }
 
-  for (let i = 2; i <= Math.sqrt(n); i++) {
+  for (let i = 2; i <= Math.sqrt(n); i += 1) {
     if (n % i === 0) {
       return false;
     }
@@ -233,11 +232,11 @@ function isPrime(n) {
 function toNumber(value, def) {
   const toNumberValue = Number(value);
 
-  if (!isNaN(toNumberValue)) {
+  if (!Number.isNaN(toNumberValue)) {
     return toNumberValue;
-  } else {
-    return def;
   }
+
+  return def;
 }
 
 /**
@@ -271,20 +270,22 @@ function getCube(num) {
 function getFibonacciNumber(index) {
   if (index === 0) {
     return 0;
-  } else if (index === 1 || index === 2) {
-    return 1;
-  } else {
-    let prevNumber = 1;
-    let curNumber = 1;
-
-    for (let i = 3; i <= index; i++) {
-      let currentFibonacci = curNumber;
-      curNumber += prevNumber;
-      prevNumber = currentFibonacci;
-    }
-
-    return curNumber;
   }
+
+  if (index === 1 || index === 2) {
+    return 1;
+  }
+
+  let prevNumber = 1;
+  let curNumber = 1;
+
+  for (let i = 3; i <= index; i += 1) {
+    const currentFibonacci = curNumber;
+    curNumber += prevNumber;
+    prevNumber = currentFibonacci;
+  }
+
+  return curNumber;
 }
 
 /**
@@ -301,8 +302,8 @@ function getFibonacciNumber(index) {
 function getSumToN(n) {
   let nSum = 0;
 
-  for (let i = 1; i <= n; i++) {
-    nSum += i
+  for (let i = 1; i <= n; i += 1) {
+    nSum += i;
   }
 
   return nSum;
@@ -320,9 +321,12 @@ function getSumToN(n) {
  *   5   => 5  // 5
  */
 function getSumOfDigits(num) {
-  let splitNumber = num.toString().split('');
+  const splitNumber = num.toString().split('');
 
-  return splitNumber.reduce((accumulator, currentDigit) => accumulator + parseInt(currentDigit), 0);
+  return splitNumber.reduce(
+    (accumulator, currentDigit) => accumulator + parseInt(currentDigit, 10),
+    0
+  );
 }
 
 /**
@@ -337,12 +341,22 @@ function getSumOfDigits(num) {
  *   15  => false
  */
 function isPowerOfTwo(num) {
-  while (num > 1) {
-    if (num % 2 !== 0) {
+  let newNum = num;
+
+  if (newNum % 2 !== 0) {
+    return false;
+  }
+
+  newNum /= 2;
+
+  let n = newNum;
+
+  while (n > 1) {
+    if (n % 2 !== 0) {
       return false;
     }
 
-    num = num / 2;
+    n /= 2;
   }
 
   return true;
@@ -433,7 +447,7 @@ function toPrecision(number, precision) {
  * Number(-5)    => -5
  */
 function getNumberValue(number) {
-  return Number(number);
+  return number.valueOf();
 }
 
 /**
@@ -452,7 +466,7 @@ function getNumberValue(number) {
  * '5'      => false
  */
 function isNumber(number) {
-  return typeof number === 'number' && isFinite(number);
+  return typeof number === 'number' && Number.isFinite(number);
 }
 
 /**
@@ -481,7 +495,11 @@ function isInteger(number) {
  * 'abcdefgh'      => NaN
  */
 function getFloatOnString(str) {
-  return isNaN(parseFloat(str)) ? NaN : parseFloat(str);
+  if (Number.isNaN(Number.parseFloat(str))) {
+    return Number.NaN;
+  }
+
+  return parseFloat(str);
 }
 
 /**
@@ -499,7 +517,12 @@ function getFloatOnString(str) {
  * '10', 8              => 8
  */
 function getIntegerOnString(str, base) {
-  return isNaN(parseInt(str, base)) ? NaN : parseInt(str, base);
+  const parsed = Number.parseInt(str, base);
+  if (Number.isNaN(parsed)) {
+    return Number.NaN;
+  }
+
+  return parsed;
 }
 
 /**
